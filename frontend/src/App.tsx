@@ -6,6 +6,7 @@ import InitialPage from './features/InitialPage/InitialPage'
 import HomePage from './features/HomePage/HomePage'
 import MainLayout from './MainLayout'
 import StorePage from './features/Store/StorePage'
+import RankPage from './features/Rank/RankPage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path='/pagina-inicial' element={<HomePage />}/>
           <Route path='/loja' element={<StorePage />}/>
+          <Route path='/classificacao' element={<RankPage />}/>
         </Route>
       </Routes>
     </>
