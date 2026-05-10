@@ -26,6 +26,8 @@ const BottomNav: React.FC = () => {
         navigate("/loja");
     }else if(tabName === 'rank') {
         navigate("/classificacao");
+    }else if(tabName === 'profile') {
+        navigate("/perfil");
     }
   }
 
@@ -50,7 +52,7 @@ const BottomNav: React.FC = () => {
         <span className="text-[11px] font-medium">Rank</span>
       </button>
 
-      <button onClick={() => setActiveTab('profile')} className={getButtonClass('profile')}>
+      <button onClick={() => {setActiveTab('profile'); navLinks('profile')}} className={getButtonClass('profile')}>
       
         <img src={Profile} alt="Perfil" className="w-8 h-8" />
         <span className="text-[11px] font-medium">Perfil</span>
