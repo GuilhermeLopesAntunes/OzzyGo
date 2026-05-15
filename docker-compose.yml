@@ -1,0 +1,44 @@
+services:
+#BD
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ozzyDB
+    volumes:
+      - pgData:/var/lib/postgresql/data #Salva os dados para não perder caso deslique o container
+
+  #Backend
+  backend:
+    build:
+      context: ./backend #Aponta para pasta do dockerfile
+    ports:
+      - "3000:3000" 
+    env_file:
+      - ./backend/.env #Injeta o .env do backend
+    depends_on:
+      - db # So sobe o back depois que o db estiver pronto
+    volumes:
+      - ./backend:/app #Cria um link entre o docker e o ambiente real (Hot reload)
+      - /app/node_modules
+
+  #frontend
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    tty: true
+
+volumes:
+  pgData:  #Declara o volume do BD
+
+
