@@ -4,14 +4,16 @@ import {
     ArgumentsHost,
     HttpException,
     HttpStatus,
+    Logger,
 } from "@nestjs/common"
-import { timestamp } from "drizzle-orm/gel-core"
 
 import type { Request, Response } from "express"
-import path from "path"
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  
+    private readonly logger = new Logger(HttpExceptionFilter.name);
+
     catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp()
         const response = ctx.getResponse<Response>()
@@ -22,19 +24,27 @@ export class HttpExceptionFilter implements ExceptionFilter {
             ? exception.getStatus()
             : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        const exceptionResponse =
-        exception instanceof HttpException
-        ? exception.getResponse()
-        : "Internal Server Error";
+        if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+            this.logger.error(
+                `Erro crítico (500) na rota ${request.url}`, 
+                exception instanceof Error ? exception.stack : exception
+            );
+        }
 
-        const mensage =
-        typeof exceptionResponse === "string"
-        ? exceptionResponse
-        : ((exceptionResponse as Record<string, unknown>).mensage ?? exceptionResponse)
+        const exceptionResponse =
+            exception instanceof HttpException
+            ? exception.getResponse()
+            : "Internal Server Error";
+
+    
+        const message =
+            typeof exceptionResponse === "string"
+            ? exceptionResponse
+            : ((exceptionResponse as Record<string, unknown>).message ?? exceptionResponse)
 
         response.status(status).json({
             statusCode: status,
-            mensage,
+            message, 
             timestamp: new Date().toISOString(),
             path: request.url,
         })

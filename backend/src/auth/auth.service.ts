@@ -3,7 +3,7 @@ import {
     ConflictException,
     UnauthorizedException,
     BadRequestException,
-    NotFoundException
+
 }from "@nestjs/common"
 import {JwtService} from "@nestjs/jwt"
 import { ConfigService } from "@nestjs/config"
@@ -15,6 +15,7 @@ import type { RegisterDto } from "./dto/register.dto"
 import type { LoginDto } from "./dto/login.dto"
 import type { Response } from "express"
 import type { User } from "src/db/schema"
+import { throwError } from "rxjs"
 
 @Injectable()
 export class AuthService {
@@ -55,6 +56,45 @@ export class AuthService {
         }
     }
 
+    async verifyEmail(token:string, res: Response) {
+        const user = await this.userService.findByVerificationToken(token);
+
+        if(!user || !user.verificationToken) {
+            throw new BadRequestException("Veriificação de token falhou")
+        }
+
+        if(
+            user.verificationTokenExpiresAt &&
+            user.verificationTokenExpiresAt < new Date()
+        ) {
+            throw new BadRequestException(
+                "Verificação de token expirou. Tente novamente"
+            )  
+        }
+         await this.userService.update(user.id, {
+            isVerified: true,
+            verificationToken: null,
+            verificationTokenExpiresAt: null
+         })
+
+         const tokens = await this.generateTokens(user)
+         await this.saveRefreshToken(user.id, tokens.refreshToken)
+         this.setRefreshTokenCookie(res, tokens.refreshToken)
+
+         return {
+            message: "Email verificado com sucesso. Se divirta com o Ozzy!",
+            acessToken: tokens.acessToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                username: user.username,
+                role: user.role
+
+            }
+         }
+    }
+
     async login(dto: LoginDto, res: Response){
         const user = await this.userService.findByUsername(dto.username)
 
@@ -88,11 +128,100 @@ export class AuthService {
         }
     }
 
+    async refresh(refreshToken: string, res: Response){
+        if(!refreshToken) {
+            throw new UnauthorizedException("Não encontramos o refresh token")
+        }
+
+        let payload: {sub: string, email:string}
+        try{
+            payload = await this.jwtService.verifyAsync(refreshToken, {
+                secret: this.configService.get("JWT_REFRESH_SECRET")
+            }) 
+        } catch {
+                throw new UnauthorizedException("Refresh token invalido")
+            }
+
+        const user = await this.userService.findById(payload.sub)
+
+        if(!user || !user.refreshTokenHash) {
+            throw new UnauthorizedException("Refresh token invalido")
+        }
+
+        const tokenMatch = await bcrypt.compare(refreshToken, user.refreshTokenHash)
+
+        if(!tokenMatch) {
+            throw new UnauthorizedException("Refresh Token Invalido")
+        }
+
+        const tokens = await this.generateTokens(user)
+
+        await this.saveRefreshToken(user.id, tokens.refreshToken)
+        this.setRefreshTokenCookie(res,tokens.refreshToken)
+
+        return {
+            acessToken: tokens.acessToken
+        }
+    }
+
+    async logout(userId: string, res: Response){
+        await this.userService.update(userId, {refreshTokenHash: null})
+
+        res.clearCookie("refresh_token")
+        return {message: "Deslogado com sucesso"}
+    }
+
+    async forgotPassword(email: string) {
+        const user = await this.userService.findByEmail(email)
+        if(!user) {
+            return {
+                message: "Se existe um email vinculado, enviaremos um link para criar nova senha"
+            }
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex")
+        const resetTokenExpiresAt = new Date(Date.now() + 60*60*1000) // 1hr
+
+        await this.userService.update(user.id, {
+            resetToken,
+            resetTokenExpiresAt
+        })
+
+        void this.emailService.sendPasswordResetEmail(user.email, resetToken)
+
+        return {
+            message: "Se existe um email vinculado, enviaremos um link para criar nova senha"
+        }
+    }
+
+    async resetPassword(token: string, newPassword: string) {
+        const user = await this.userService.findByResetToken(token)
+
+        if(!user || !user.resetToken) {
+            throw new BadRequestException("Reset Token Invalido")
+        }
+
+        if(user.resetTokenExpiresAt && user.resetTokenExpiresAt < new Date()) {
+            throw new BadRequestException("Reset token expirado. Faça outra requisição")
+        }
+
+        const passwordHash = await bcrypt.hash(newPassword,12)
+
+        await this.userService.update(user.id, {
+            passwordHash,
+            resetToken: null,
+            resetTokenExpiresAt: null
+        })
+
+        return {
+            message: "Senha resetada com sucesso. Você pode entrar novamente"
+        }
+    }
     private async generateTokens(user: User){
         const payload = {sub: user.id, email: user.email, role: user.role}
 
         const acessToken = await this.jwtService.signAsync(payload, {
-            secret: this.configService.get("JWT_ACESS_SECRET"),
+            secret: this.configService.get("JWT_ACCESS_SECRET"),
             expiresIn: this.configService.get("JWT_EXPIRES_IN")
         });
 
@@ -114,6 +243,7 @@ export class AuthService {
         await this.userService.update(userId, {refreshTokenHash})
     }
 
+    
     private setRefreshTokenCookie(res: Response, refreshToken: string) {
         res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
