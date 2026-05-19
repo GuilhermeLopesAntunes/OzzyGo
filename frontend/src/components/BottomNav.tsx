@@ -5,7 +5,7 @@ import Rank from "../assets/icons/RankPage.svg"
 import Profile from "../assets/icons/ProfilePage.svg"
 import {useNavigate} from 'react-router-dom';
 
-type TabType = 'home' | 'store' | 'notifications' | 'profile';
+type TabType = 'home' | 'store' | 'rank' | 'profile';
 
 const BottomNav: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -24,6 +24,10 @@ const BottomNav: React.FC = () => {
         navigate("/pagina-inicial");
     } else if(tabName === 'store') {
         navigate("/loja");
+    }else if(tabName === 'rank') {
+        navigate("/classificacao");
+    }else if(tabName === 'profile') {
+        navigate("/perfil");
     }
   }
 
@@ -42,13 +46,13 @@ const BottomNav: React.FC = () => {
         <span className="text-[11px] font-medium">Loja</span>
       </button>
 
-      <button onClick={() => setActiveTab('notifications')} className={getButtonClass('notifications')}>
+      <button onClick={() => {setActiveTab('rank'); navLinks('rank')}} className={getButtonClass('rank')}>
        
         <img src={Rank} alt="Rank" className="w-8 h-8" />
         <span className="text-[11px] font-medium">Rank</span>
       </button>
 
-      <button onClick={() => setActiveTab('profile')} className={getButtonClass('profile')}>
+      <button onClick={() => {setActiveTab('profile'); navLinks('profile')}} className={getButtonClass('profile')}>
       
         <img src={Profile} alt="Perfil" className="w-8 h-8" />
         <span className="text-[11px] font-medium">Perfil</span>
