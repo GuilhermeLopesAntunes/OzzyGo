@@ -6,5 +6,5 @@ export interface LoadingContextData {
     hideLoading: () => void;
 }
 
-// Exportamos apenas o contexto e a interface (não são componentes)
+
 export const LoadingContext = createContext<LoadingContextData>({} as LoadingContextData);
