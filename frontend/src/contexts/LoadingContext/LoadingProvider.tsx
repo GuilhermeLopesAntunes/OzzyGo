@@ -3,8 +3,7 @@ import { useState, type ReactNode } from "react";
 import animationDataJson from "./lotties/loadingLottie.json";
 import { LoadingContext } from "./LoadingContext";
 
-// 1. Criamos um componente interno só para a animação
-// Isso garante que o useLottie rode exatamente como no seu OzzyConversation
+
 function LottiePlayer() {
     const options = {
         animationData: animationDataJson,

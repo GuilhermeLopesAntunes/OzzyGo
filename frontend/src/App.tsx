@@ -8,6 +8,7 @@ import MainLayout from './MainLayout'
 import StorePage from './features/Store/StorePage'
 import RankPage from './features/Rank/RankPage'
 import ProfilePage from './features/Profile/ProfilePage'
+import LoginPage from './features/LoginPage/LoginPage'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         {/* Rotas sem a Bottom Nav */}
         <Route path='/' element={<InitialPage />}/>
         <Route path='/registro' element={<RegisterPage />}/>
+        <Route path='/entrar' element={<LoginPage/>}/>
         
         {/* Rotas COM a Bottom Nav (agrupadas no MainLayout) */}
         <Route element={<MainLayout />}>
