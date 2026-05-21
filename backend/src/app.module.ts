@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { RolesGuard } from './common/guards/roles.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { SchoolsModule } from './schools/schools.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     }),
     JwtModule.register({global: true}),
     UserModule,
-    AuthModule
+    AuthModule,
+    SchoolsModule
   ],
   providers: [
     {

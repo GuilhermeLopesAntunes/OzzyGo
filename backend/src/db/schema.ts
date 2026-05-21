@@ -10,7 +10,7 @@ import {
     primaryKey 
 } from "drizzle-orm/pg-core";
 
-export const userRoleEnum = pgEnum("user_role", ["student", "professor"])
+export const userRoleEnum = pgEnum("user_role", ["student", "professor", "admin"])
 
 export const users = pgTable("users", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -77,7 +77,41 @@ export const professors = pgTable("professors", {
     return {
         pk: primaryKey({ columns: [table.id] })
     };
+}
+
+
+
+);
+
+export const studentClassrooms = pgTable("student_classrooms", {
+    studentId: uuid("student_id")
+        .notNull()
+        .references(() => students.id, { onDelete: "cascade" }),
+    classroomId: uuid("classroom_id")
+        .notNull()
+        .references(() => classrooms.id, { onDelete: "cascade" }),
+    joinedAt: timestamp("joined_at").defaultNow().notNull()
+}, (table) => {
+    return {
+        pk: primaryKey({ columns: [table.studentId, table.classroomId] })
+    }
+});
+
+export const professorClassrooms = pgTable("professor_classrooms", {
+    professorId: uuid("professor_id")
+        .notNull()
+        .references(() => professors.id, { onDelete: "cascade" }),
+    classroomId: uuid("classroom_id")
+        .notNull()
+        .references(() => classrooms.id, { onDelete: "cascade" }),
+    assignedAt: timestamp("assigned_at").defaultNow().notNull()
+}, (table) => {
+    return {
+        pk: primaryKey({ columns: [table.professorId, table.classroomId] })
+    }
 });
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+export type School = typeof schools.$inferSelect
+export type NewSchool = typeof schools.$inferInsert
