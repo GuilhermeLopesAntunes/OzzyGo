@@ -52,6 +52,8 @@ export const students = pgTable("students", {
     id: uuid('student_id')
         .notNull() 
         .references(() => users.id, { onDelete: "cascade" }),
+    classroomId: uuid("classroom_id")
+        .references(() => classrooms.id, { onDelete: "set null" }),
     level: integer("level").default(1).notNull(),
     currentXp: integer("current_xp").default(0).notNull(), 
     totalXp: integer("total_xp").default(0).notNull(),
@@ -83,19 +85,6 @@ export const professors = pgTable("professors", {
 
 );
 
-export const studentClassrooms = pgTable("student_classrooms", {
-    studentId: uuid("student_id")
-        .notNull()
-        .references(() => students.id, { onDelete: "cascade" }),
-    classroomId: uuid("classroom_id")
-        .notNull()
-        .references(() => classrooms.id, { onDelete: "cascade" }),
-    joinedAt: timestamp("joined_at").defaultNow().notNull()
-}, (table) => {
-    return {
-        pk: primaryKey({ columns: [table.studentId, table.classroomId] })
-    }
-});
 
 export const professorClassrooms = pgTable("professor_classrooms", {
     professorId: uuid("professor_id")

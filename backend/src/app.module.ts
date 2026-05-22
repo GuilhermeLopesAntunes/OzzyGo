@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { RolesGuard } from './common/guards/roles.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SchoolsModule } from './schools/schools.module';
+import { ClassroomsModule } from './classrooms/classrooms.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { SchoolsModule } from './schools/schools.module';
     JwtModule.register({global: true}),
     UserModule,
     AuthModule,
-    SchoolsModule
+    SchoolsModule,
+    ClassroomsModule
   ],
   providers: [
     {
