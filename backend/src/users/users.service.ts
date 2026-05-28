@@ -1,11 +1,62 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { db } from "src/db";
-import { users } from "src/db/schema";
+import { classrooms, professors,students, users } from "src/db/schema";
 import { eq } from "drizzle-orm";
 import type { NewUser } from "src/db/schema";
 
 @Injectable()
 export class UsersService {
+
+ async joinClass(code: string, userId: string) {
+    
+        const professorSecretCode = process.env.PROFESSOR_CODE; 
+
+        if (code === professorSecretCode) {
+            await db.transaction(async (tx) => {
+                await tx.update(users)
+                    .set({ 
+                        role: 'professor', 
+                        updatedAt: new Date() 
+                    })
+                    .where(eq(users.id, userId));
+                await tx.insert(professors)
+                    .values({ id: userId })
+                    .onConflictDoNothing(); 
+            });
+
+            return { message: 'Conta elevada para professor com sucesso.' };
+        }
+
+        const classroom = await db.query.classrooms.findFirst({
+            where: eq(classrooms.code, code)
+        });
+
+        if (!classroom) {
+            throw new NotFoundException('Código de turma inválido ou não encontrado.');
+        }
+
+        await db.transaction(async (tx) => {
+            await tx.insert(students)
+                .values(
+                    { id: userId,
+                      classroomId: classroom.id
+                     }
+                )
+                .onConflictDoUpdate({
+                    target: students.id, 
+                    set: { 
+                        classroomId: classroom.id, 
+                        updatedAt: new Date()
+                    }
+                })
+        });
+        return { 
+            message: 'Bem-vindo à turma!', 
+            classroomId: classroom.id,
+            classroomName: classroom.name 
+        };
+    }   
+    
 async findByVerificationToken(token: string){
     return db.query.users.findFirst({
         where: eq(users.verificationToken, token)
