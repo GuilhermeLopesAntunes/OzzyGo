@@ -32,7 +32,7 @@ export class SchoolsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.schoolsService.findOne(+id);
+    return this.schoolsService.findOne(id);
   }
 
   @Patch(':id')

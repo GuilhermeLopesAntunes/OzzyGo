@@ -39,7 +39,7 @@ export class SchoolsService {
         });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} school`;
   }
 

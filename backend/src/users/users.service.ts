@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { db } from "src/db";
-import { classrooms, professors, studentClassrooms, students, users } from "src/db/schema";
+import { classrooms, professors,students, users } from "src/db/schema";
 import { eq } from "drizzle-orm";
 import type { NewUser } from "src/db/schema";
 
@@ -37,14 +37,18 @@ export class UsersService {
 
         await db.transaction(async (tx) => {
             await tx.insert(students)
-                .values({ id: userId })
-                .onConflictDoNothing();
-            await tx.insert(studentClassrooms)
-                .values({
-                    studentId: userId,
-                    classroomId: classroom.id,
+                .values(
+                    { id: userId,
+                      classroomId: classroom.id
+                     }
+                )
+                .onConflictDoUpdate({
+                    target: students.id, 
+                    set: { 
+                        classroomId: classroom.id, 
+                        updatedAt: new Date()
+                    }
                 })
-                .onConflictDoNothing(); 
         });
         return { 
             message: 'Bem-vindo à turma!', 
