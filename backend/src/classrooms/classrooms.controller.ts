@@ -17,6 +17,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import type { User } from 'src/db/schema';
 
 @ApiTags("Classrooms")
 @ApiBearerAuth()
@@ -33,15 +35,16 @@ export class ClassroomsController {
     return this.classroomsService.create(createClassroomDto);
   }
 
-  @Post(':id/professors/:professorId')
-  @Roles("admin") // Apenas admins alocam professores
+  @Post(':id/join')
+  @Roles("professor", "admin") // Permitimos que o professor (e o admin) façam isso
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Vincula um professor a uma turma (Apenas Admins)" })
-  assignProfessor(
-    @Param('id') id: string, 
-    @Param('professorId') professorId: string
+  @ApiOperation({ summary: "Vincula o professor logado a uma turma existente" })
+  joinClassroomAsProfessor(
+    @Param('id') classroomId: string, 
+    @CurrentUser() user: User 
   ) {
-    return this.classroomsService.assignProfessor(id, professorId);
+
+    return this.classroomsService.joinAsProfessor(classroomId, user.id);
   }
 
   @Get()

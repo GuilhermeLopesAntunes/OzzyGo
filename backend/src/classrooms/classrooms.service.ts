@@ -58,6 +58,23 @@ export class ClassroomsService {
     }
   }
 
+
+  async joinAsProfessor(classroomId: string, professorId: string) {
+    try {
+
+      await db.insert(professorClassrooms)
+        .values({
+          classroomId: classroomId,
+          professorId: professorId,
+        })
+        .onConflictDoNothing(); // Se ele tentar entrar de novo na mesma turma, apenas ignora
+
+      return { message: 'Você ingressou na turma com sucesso.' };
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao ingressar na turma.');
+    }
+  }
+
   // 3. Removendo um Professor da Turma
   async removeProfessor(classroomId: string, professorId: string) {
     try {
