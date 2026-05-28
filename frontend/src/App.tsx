@@ -9,6 +9,9 @@ import StorePage from './features/Store/StorePage'
 import RankPage from './features/Rank/RankPage'
 import ProfilePage from './features/Profile/ProfilePage'
 import LoginPage from './features/LoginPage/LoginPage'
+import { OnboardingPage } from './features/OnBoarding/OnboardingPage'
+import { PrivateRoute } from './features/PrivateRoute/PrivateRoute'
+import { PublicRoute } from './features/PublicRoute/PublicRoute'
 
 function App() {
   return (
@@ -18,10 +21,25 @@ function App() {
         {/* Rotas sem a Bottom Nav */}
         <Route path='/' element={<InitialPage />}/>
         <Route path='/registro' element={<RegisterPage />}/>
-        <Route path='/entrar' element={<LoginPage/>}/>
+
+        <Route path='/entrar' element={
+          <PublicRoute> <LoginPage/> </PublicRoute>
+          
+          }/>
+
+        <Route path="/onboarding" element={
+          <PrivateRoute>
+            <OnboardingPage />
+          </PrivateRoute>
+        } />
         
         {/* Rotas COM a Bottom Nav (agrupadas no MainLayout) */}
-        <Route element={<MainLayout />}>
+        <Route element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+          
+          }>
           <Route path='/pagina-inicial' element={<HomePage />}/>
           <Route path='/loja' element={<StorePage />}/>
           <Route path='/classificacao' element={<RankPage />}/>
