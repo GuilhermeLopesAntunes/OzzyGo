@@ -25,6 +25,7 @@ export class SchoolsController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
+    @Roles("admin")
     @ApiOperation({ summary: "Lista todas as escolas ativas" })
     findAll() {
         return this.schoolsService.findAll();

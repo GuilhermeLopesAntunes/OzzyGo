@@ -9,6 +9,8 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SchoolsModule } from './schools/schools.module';
 import { ClassroomsModule } from './classrooms/classrooms.module';
+import { StudentsModule } from './students/students.module';
+import { ProfessorsModule } from './professors/professors.module';
 
 @Module({
   imports: [
@@ -27,7 +29,9 @@ import { ClassroomsModule } from './classrooms/classrooms.module';
     UserModule,
     AuthModule,
     SchoolsModule,
-    ClassroomsModule
+    ClassroomsModule,
+    StudentsModule,
+    ProfessorsModule
   ],
   providers: [
     {
