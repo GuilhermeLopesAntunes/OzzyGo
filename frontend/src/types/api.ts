@@ -8,6 +8,23 @@ export interface User {
     name: string;
     username: string;
     role: UserRole;
+    isActive?: boolean;
+}
+
+export interface StudentProfile {
+    id: string;
+    classroomId: string | null;
+    level: number;
+    currentXp: number;
+    totalXp: number;
+    ruby: number;
+    user: User; 
+}
+
+export interface ProfessorProfile {
+    id: string;
+    specialization: string | null;
+    user: User;
 }
 
 export interface LoginData {

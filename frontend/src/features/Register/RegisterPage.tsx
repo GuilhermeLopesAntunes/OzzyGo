@@ -64,7 +64,7 @@ export default function RegisterPage() {
 
             // Se deu sucesso, redirecionamos para o Login (ou tela de aviso)
             // passando uma mensagem de sucesso no estado da rota
-            navigate('/login', { 
+            navigate('/entrar', { 
                 state: { message: "Registro feito com sucesso! Verifique seu e-mail para ativar a conta." }
             });
 
