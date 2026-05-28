@@ -56,9 +56,7 @@ export class AuthService {
         }
     }
 
-   async joinClass(code, userId) {
-    return this.userService.joinClass(code, userId)
-   }
+
 
     async verifyEmail(token:string, res: Response) {
         const user = await this.userService.findByVerificationToken(token);

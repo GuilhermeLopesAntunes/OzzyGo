@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum } from "drizzle-orm/pg-core";
 import { 
     pgTable, 
@@ -20,6 +21,7 @@ export const users = pgTable("users", {
     username: text("username").notNull(),
     role: userRoleEnum('role').notNull().default("student"),
     isVerified: boolean('is_verified').notNull().default(false),
+    isActive: boolean('is_active').notNull().default(true),
     verificationToken: text("verificationToken"),
     verificationTokenExpiresAt: timestamp('verification_token_expires_at'),
     resetToken: text("reset_token"),
@@ -99,6 +101,27 @@ export const professorClassrooms = pgTable("professor_classrooms", {
         pk: primaryKey({ columns: [table.professorId, table.classroomId] })
     }
 });
+
+export const studentsRelations = relations(students, ({ one }) => ({
+    user: one(users, {
+        fields: [students.id],      // O campo na tabela students
+        references: [users.id],     // O campo na tabela users
+    }),
+
+    classroom: one(classrooms, {
+        fields: [students.classroomId],
+        references: [classrooms.id],
+    })
+}));
+
+export const professorsRelations = relations(professors, ({ one, many }) => ({
+    user: one(users, {
+        fields: [professors.id],
+        references: [users.id],
+    }),
+
+    classrooms: many(professorClassrooms), 
+}));
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
