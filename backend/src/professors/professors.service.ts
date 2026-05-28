@@ -15,12 +15,11 @@ export class ProfessorsService {
     }
 
     try {
-      // 1. Cria o perfil na tabela professors primeiro (usando db direto, sem transaction)
+  
       await db.insert(professors)
         .values({ id: userId })
         .onConflictDoNothing(); 
 
-      // 2. Com o perfil criado com sucesso, atualiza a role do usuário global
       await db.update(users)
         .set({ 
           role: 'professor', 
@@ -31,7 +30,7 @@ export class ProfessorsService {
       return { message: 'Parabéns! Sua conta foi elevada para Professor.' };
 
     } catch (error) {
-      // Se qualquer coisa falhar nas chamadas HTTP do Neon, pegamos o erro aqui
+
       throw new InternalServerErrorException('Erro ao processar a promoção no banco de dados.');
     }
 }
