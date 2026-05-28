@@ -122,5 +122,15 @@ export class AuthController {
     async resetPassword(@Body() dto: ResetPasswordDto){
         return this.authService.resetPassword(dto.token, dto.password)
     }
-    
+
+    //POST /api/auth/join-class
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({summary: "Vinculando um aluno ou professor"})
+    async joinClass(
+        @Body('code') code: string, 
+        @Body('userId') userId: string 
+    ){
+        return this.authService.joinClass(code, userId);
+    }
+
 }
