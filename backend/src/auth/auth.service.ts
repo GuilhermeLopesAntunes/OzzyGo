@@ -56,6 +56,8 @@ export class AuthService {
         }
     }
 
+
+
     async verifyEmail(token:string, res: Response) {
         const user = await this.userService.findByVerificationToken(token);
 

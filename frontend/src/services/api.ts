@@ -21,11 +21,11 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
-    // Enviar e receber o cookie HTTP-Only do Refresh Token
+
     withCredentials: true
 })
 
-//Ida
+
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         const token = localStorage.getItem('@OzzyGo:accessToken')
@@ -50,9 +50,12 @@ api.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & {_retry?: boolean}
 
         if(error.response?.status === 401 && !originalRequest._retry) {
+            if (originalRequest.url?.includes('/auth/login')) {
+                return Promise.reject(error);
+            }
             if (originalRequest.url?.includes('/auth/refresh')) {
                 localStorage.removeItem('@OzzyGo:accessToken');
-                window.location.href = '/login'; 
+                window.location.href = '/entrar'; 
                 return Promise.reject(error);
             }
             originalRequest._retry = true;

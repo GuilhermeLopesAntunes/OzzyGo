@@ -8,6 +8,8 @@ import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import HeaderInitialPage from "./components/HeaderInitialPage";
 
+ 
+
 export default function InitialPage() {
     return(
         <div className="mx-6 sm:mx-16 my-6 xl:mx-auto xl:max-w-6xl">

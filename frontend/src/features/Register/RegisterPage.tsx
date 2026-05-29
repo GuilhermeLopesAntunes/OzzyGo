@@ -13,6 +13,9 @@ import {useForm} from 'react-hook-form'
 import { useLoading } from "../../hooks/useLoading";
 import HeaderInitialPage from "../InitialPage/components/HeaderInitialPage";
 import { authService } from "../../services/authService";
+import { useToast } from "../../hooks/useToast";
+
+
 
 interface RegisterFormValues {
     username: string; 
@@ -23,9 +26,12 @@ interface RegisterFormValues {
 }
 
 export default function RegisterPage() {
+
+
     const [stage, setStage] = useState(0)
     const navigate = useNavigate();
     const { showLoading, hideLoading } = useLoading();
+    const { addToast } = useToast();
     
     
     const {
@@ -40,7 +46,7 @@ export default function RegisterPage() {
     const password = watch("password");
 
     const handleNextStage = async () => {
-        // O trigger testa apenas o campo "username". Se passar, ele retorna true.
+
         const isStepValid = await trigger("username"); 
         if (isStepValid) {
             setStage(1);
@@ -54,7 +60,6 @@ export default function RegisterPage() {
         try {
             showLoading();
             
-            // Enviamos para a API. Note que não mandamos o passwordConfirm para o backend
             await authService.register({
                 name: data.name,
                 email: data.email,
@@ -62,16 +67,23 @@ export default function RegisterPage() {
                 password: data.password
             });
 
-            // Se deu sucesso, redirecionamos para o Login (ou tela de aviso)
-            // passando uma mensagem de sucesso no estado da rota
-            navigate('/login', { 
+            addToast({
+                type: 'success',
+                title: 'Conta criada!',
+                description: 'Verifique seu e-mail para ativar a conta.',
+            });
+           
+            navigate('/entrar', { 
                 state: { message: "Registro feito com sucesso! Verifique seu e-mail para ativar a conta." }
             });
 
         } catch (error: any) {
-            // O interceptor do axios repassa os erros do NestJS (ex: 409 Conflict)
             const errorMessage = error.response?.data?.message || "Ocorreu um erro ao criar a conta.";
-            alert(errorMessage); // Substitua por um Toast se tiver um no projeto!
+            addToast({
+                type: 'error',
+                title: 'Erro no cadastro',
+                description: errorMessage,
+            });
         } finally {
             hideLoading();
         }
