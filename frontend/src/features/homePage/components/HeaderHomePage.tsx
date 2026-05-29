@@ -3,11 +3,13 @@ import { Link } from "react-router-dom"
 import Ruby from "../../../assets/icons/Ruby.svg"
 import Trophy from "../../../assets/icons/Trophy.svg"
 import Button from "../../../components/Button"
+import { useAuth } from "../../../contexts/AuthContext"
 
 export interface props {
     isRegister: boolean
 }
 export default function HeaderHomePage() {
+    const { signOut } = useAuth();
     return (
         <nav className="flex justify-between border-b  border-[#e2e2e2]">
             <Link to="/pagina-inicial"><img className="pb-2  sm:w-25 xl:w-32" src= {Logo} alt="Ozzy voando em um disco voador" /></Link>
@@ -21,7 +23,7 @@ export default function HeaderHomePage() {
                     <span className="text-[#FFCB1E] font-bold">10</span>
                    
                 </div>
-                <Button type="button" variant="secondary">Sair</Button>
+                <Button onClick={signOut} type="button" variant="secondary">Sair</Button>
             </div>
         </nav>
     )

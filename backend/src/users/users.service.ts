@@ -1,11 +1,38 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { db } from "src/db";
-import { users } from "src/db/schema";
+import { classrooms, professors,students, users } from "src/db/schema";
 import { eq } from "drizzle-orm";
 import type { NewUser } from "src/db/schema";
 
 @Injectable()
 export class UsersService {
+
+ async promoteToProfessor(code: string, userId: string) {
+    const professorSecretCode = process.env.PROFESSOR_CODE; 
+
+    if (code !== professorSecretCode) {
+        // Se o código tiver errado, já corta por aqui!
+        throw new BadRequestException('Código de elevação inválido.');
+    }
+
+    await db.transaction(async (tx) => {
+        // 1. Atualiza a role do usuário para professor
+        await tx.update(users)
+            .set({ 
+                role: 'professor', 
+                updatedAt: new Date() 
+            })
+            .where(eq(users.id, userId));
+            
+        // 2. Cria o perfil vazio na tabela de professores
+        await tx.insert(professors)
+            .values({ id: userId })
+            .onConflictDoNothing(); 
+    });
+
+    return { message: 'Conta elevada para professor com sucesso.' };
+}
+    
 async findByVerificationToken(token: string){
     return db.query.users.findFirst({
         where: eq(users.verificationToken, token)

@@ -12,6 +12,7 @@ import VisibilityControlIcon from "../../components/Input/lotties/passwordVisibi
 
 import UserIcon from "../../assets/icons/UserIcon.svg";
 import PasswordIcon from "../../assets/icons/PasswordIcon.svg";
+import { useToast } from "../../hooks/useToast";
 
 // A tipagem reflete exatamente o que o seu NestJS espera no LoginDto
 interface LoginFormValues {
@@ -26,6 +27,7 @@ export default function LoginPage() {
     const location = useLocation();
 
     const successMessage = location.state?.message;
+    const {addToast} = useToast()
 
     const {
         register, 
@@ -41,11 +43,20 @@ export default function LoginPage() {
             
            
             navigate('/pagina-inicial'); 
+            addToast({
+                type: 'success',
+                title: 'Bem Vindo!',
+                description: 'Que bom ver você se divita!',
+            });
             
         } catch (error: any) {
             
             const errorMessage = error.response?.data?.message || "Erro ao fazer login. Verifique suas credenciais.";
-            alert(errorMessage); 
+            addToast({
+                type: 'error',
+                title: 'Erro ao entrar',
+                description: errorMessage,
+            });
         } finally {
             hideLoading(); 
         }
