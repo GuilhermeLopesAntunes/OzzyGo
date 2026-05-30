@@ -5,7 +5,6 @@ interface props {
     showUser: boolean;
 }
 
-// Mudei para uma função nomeada interna para facilitar o uso
 export default function RankingBar({ height, position, showUser = false }: props) {
   return (
     <div className="flex flex-col items-center flex-1"> 

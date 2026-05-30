@@ -33,7 +33,6 @@ function App() {
           </PrivateRoute>
         } />
         
-        {/* Rotas COM a Bottom Nav (agrupadas no MainLayout) */}
         <Route element={
           <PrivateRoute>
             <MainLayout />

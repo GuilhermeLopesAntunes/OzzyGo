@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import { useLoading } from "../../hooks/useLoading";
-import { useAuth } from "../../contexts/AuthContext"; // Importando o contexto de autenticação
+import { useAuth } from "../../hooks/useAuth";
 
 import OzzyConversation from "../Register/components/OzzyConversation"; 
 import OzzyDefaultAnimation from "../Register/lotties/OzzyDefaultAnimation.json";

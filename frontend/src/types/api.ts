@@ -18,6 +18,7 @@ export interface StudentProfile {
     currentXp: number;
     totalXp: number;
     ruby: number;
+    trophy: number;
     user: User; 
 }
 
