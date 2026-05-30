@@ -26,13 +26,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function fetchMe() {
         try {
-            // 1. Busca os dados base do Usuário
+        
             const { data: userData } = await api.get<User>('/auth/me'); 
             setUser(userData);
             
             if (userData.role === 'student') {
-                const { data: profileData } = await api.get<StudentProfile>('/students/profile');
-                setStudentProfile(profileData);
+                try {
+                    const { data: profileData } = await api.get<StudentProfile>('/students/profile');
+                    setStudentProfile(profileData);
+                } catch (profileError) {
+                    console.warn("Perfil do aluno não encontrado (usuário em onboarding).");
+                    setStudentProfile(null);
+                }
             }
             
 
