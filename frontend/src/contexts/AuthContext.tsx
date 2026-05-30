@@ -81,7 +81,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             showLoading();
             const response = await authService.login(data);
-            setUser(response.user);
+            api.defaults.headers.common.Authorization = `Bearer ${response.acessToken}`;
+            await fetchMe();
         } catch (error) {
             console.error("Erro no login", error);
             throw error;
