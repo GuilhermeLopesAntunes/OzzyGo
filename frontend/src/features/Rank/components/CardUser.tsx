@@ -1,6 +1,3 @@
-import EnergyIcon from "../../../assets/icons/energyIcon.svg"
-import ProgressBar from "../../../components/ProgressBar"
-import TreasureChest from "../../../assets/icons/TreasureChest.svg"
 import { LevelProgress } from "../../../components/LevelProgress";
 
 export default function CardUser() {

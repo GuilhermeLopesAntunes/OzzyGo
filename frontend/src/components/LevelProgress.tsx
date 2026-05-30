@@ -20,7 +20,7 @@ export function LevelProgress({ currentXp, maxXp, level }: LevelProgressProps) {
       
   
       <div className="flex justify-between items-center mt-1">
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center">
           <img src={EnergyIcon} alt="Ícone de energia" className="w-6 h-6" /> 
           
 
