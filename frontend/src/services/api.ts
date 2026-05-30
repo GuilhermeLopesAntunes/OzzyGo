@@ -95,7 +95,7 @@ api.interceptors.response.use(
             } catch (err) {
                 processQueue(err as AxiosError, null);
                 localStorage.removeItem('@OzzyGo:accessToken');
-                window.location.href = '/login';
+                window.location.href = '/entrar';
                 return Promise.reject(err);
             } finally {
                 isRefreshing = false;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import BottomNav from './components/BottomNav';
 import HeaderHomePage from './features/HomePage/components/HeaderHomePage';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from './hooks/useAuth'; 
 import { studentService } from './services/studentService';
 import { useLoading } from './hooks/useLoading';
 
@@ -39,7 +39,6 @@ const MainLayout: React.FC = () => {
     verifyFirstAccess();
   }, [user, navigate]);
 
-  // Enquanto estiver checando, não renderiza o Header nem as páginas filhas
   if (isCheckingInfo) {
     return null
   }

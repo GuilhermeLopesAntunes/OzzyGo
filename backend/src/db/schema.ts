@@ -61,7 +61,8 @@ export const students = pgTable("students", {
     totalXp: integer("total_xp").default(0).notNull(),
     levelProgress: doublePrecision("level_progress").default(0).notNull(),
     rank: integer("rank"),
-    ruby: integer("ruby").default(0).notNull(),
+    ruby: integer("ruby").default(100).notNull(),
+    trophy: integer("trophy").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull()
 }, (table) => {

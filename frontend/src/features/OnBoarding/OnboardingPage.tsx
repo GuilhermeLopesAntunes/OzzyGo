@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentService } from '../../services/studentService'; 
 import { professorService } from '../../services/professorService'; 
-import { useAuth } from '../../contexts/AuthContext'; 
+import { useAuth } from '../../hooks/useAuth'; 
 import { useLoading } from '../../hooks/useLoading'; 
 import Button from '../../components/Button';
 import ozzyGoLogo from "../../assets/ozzyLogo.svg"
-// Se tiver o componente do Ozzy Lottie, importe aqui! Ex: import OzzyAnimation from '../components/OzzyAnimation';
 
 export function OnboardingPage() {
   const [code, setCode] = useState('');
